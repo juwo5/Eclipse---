@@ -303,5 +303,27 @@
   	select count(1) from ju_user
   	where email=#{email}
   </select>
+  <!-- 问题和答案 -->
+  <select id="getUserQuestion" resultType="string" parameterType="string">
+  	select question from ju_user
+  	where username=#{username}
+  </select>
+  <select id="checkUserAnswer" resultType="int" parameterType="map">
+  	select  count(1) from ju_user
+  	where username=#{username}
+  	and answer=#{answer}
+  </select>
+  <update id="resetPassword" parameterType="map">
+  	update ju_user
+  	set password=#{newpassword}
+  	where username=#{username}
+  </update>
+  <select id="getUserById" resultType="user" parameterType="int">
+  	select * from ju_user
+  	where id=#{id}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+  	select * from ju_user
+  </select>
   
 </mapper>

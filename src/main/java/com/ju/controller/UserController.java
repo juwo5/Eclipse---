@@ -1,6 +1,7 @@
 package com.ju.controller;
 
-import javax.annotation.Resource;
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,49 @@ public class UserController {
 	public JSONData<String> logout(HttpSession session) {
 		session.removeAttribute("current_user");
 		return JSONData.buildSuccess("退出成功");
+	}
+	
+	@ApiOperation(value="未登录",notes="未登录描述",httpMethod="POST")
+	@RequestMapping(value="getLoginUser",method=RequestMethod.POST)
+	@ResponseBody
+	public JSONData<User> getLoginUser(HttpSession session) {
+		User user = (User) session.getAttribute("current_user");
+		if(user!=null) {
+			return JSONData.buildSuccess(user);
+		}
+		return JSONData.buildError("用户未登录");
+	}
+	
+	@ApiOperation(value="提示问题",notes="提示问题描述",httpMethod="POST")
+	@RequestMapping(value="getUserQuestion",method=RequestMethod.POST)
+	@ResponseBody
+	public JSONData<String> getUserQuestion(String username) {
+		return userService.getUserQuestion(username);
+	}
+	@ApiOperation(value="回答答案",notes="答案描述",httpMethod="POST")
+	@RequestMapping(value="checkUserAnswer",method=RequestMethod.POST)
+	@ResponseBody
+	public JSONData<String> checkUserAnswer(String username,String answer) {
+		return userService.checkUserAnswer(username, answer);
+	}
+	@ApiOperation(value="重置密码",notes="重置密码描述",httpMethod="POST")
+	@RequestMapping(value="resetPassword",method=RequestMethod.POST)
+	@ResponseBody
+	public JSONData<String> resetPassword(String username,String newpassword) {
+		return userService.resetPassword(username, newpassword);
+	}
+	
+	@ApiOperation(value="通过ID获取用户",notes="通过ID获取用户描述",httpMethod="POST")
+	@RequestMapping(value="getUserById",method=RequestMethod.POST)
+	@ResponseBody
+	public JSONData<User> getUserById(Integer id){
+		return userService.getUserById(id);
+	}
+	@ApiOperation(value="获取所有用户",notes="获取所有用户描述",httpMethod="POST")
+	@RequestMapping(value="getAllUser",method=RequestMethod.POST)
+	@ResponseBody
+	public JSONData<List<User>> getAllUser(){
+		return userService.getAllUser();
 	}
 	
 	

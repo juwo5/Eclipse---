@@ -1,9 +1,11 @@
 package com.ju.dao;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.ju.entity.User;
 import com.ju.entity.UserExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface UserMapper {
     long countByExample(UserExample example);
@@ -31,7 +33,7 @@ public interface UserMapper {
     
     
     
-    List<User> selectALL();
+    List<User> selectAll();
     
     
     //登录
@@ -41,5 +43,11 @@ public interface UserMapper {
     //注册int insert(User record);
     	//用户名和邮箱判断
     	int checkEmail(String email);
+    	
+    String getUserQuestion(String username);
+    int checkUserAnswer(@Param("username")String username,@Param("answer")String answer);
+    int resetPassword(@Param("username")String username,@Param("newpassword")String newpassword);
+
+    User getUserById(Integer id);
     
 }
