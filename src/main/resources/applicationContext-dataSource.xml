@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	<!-- 引入文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	<!-- 配置datasource -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${db.driver-class-name}"/>
+		<property name="url" value="${url}"/>
+		<property name="username" value="${username1}"/>
+		<property name="password" value="${password}"/>
+		<!-- <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+		<property name="url" value="jdbc:mysql://localhost:3306/shopping"/>
+		<property name="username" value="root"/>
+		<property name="password" value="root"/> -->
+		<!-- druid连接池  -->
+		<!-- 初始链接5，最小链接10，最大链接20，间隔6000毫秒检测需要关闭的空闲链接 
+			一个连接池最小生存时间30000毫秒	
+			检查链接是否有效，
+		-->
+		<property name="initialSize" value="5"></property>
+		<property name="minIdle" value="10"></property>
+		<property name="maxActive" value="20"></property>
+		<property name="timeBetweenEvictionRunsMillis" value="60000"></property>
+		<property name="minEvictableIdleTimeMillis" value="30000"></property>
+		
+		<property name="validationQuery" value="select 1 from dual"></property>
+		<property name="testWhileIdle" value="true"></property>
+		<property name="testOnBorrow" value="false"></property>
+		<property name="testOnReturn" value="false"></property>
+	</bean>
+	<!-- sqlsessionfactory:引入数据源，xml映射，分页插件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="mapperLocations" value="classpath:com/ju/dao/*Mapper.xml"></property>
+		<property name="typeAliasesPackage" value="com.ju.entity"></property>
+		<property name="plugins">
+			<array>
+				<bean class="com.github.pagehelper.PageHelper">
+					<property name="properties">
+						<props>
+							<prop key="helperDialect">mysql</prop>
+						</props>
+					</property>
+				</bean>
+			</array>
+		</property>
+
+	</bean>
+	
+	<!-- spring:mapper接口 -->
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+		<property name="basePackage" value="com.ju.dao"></property>
+	</bean>
+	<!-- 启动事务注解true -->
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+	<!-- 配置事务管理 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="rollbackOnCommitFailure" value="true"></property>
+	</bean>
+		
+</beans>
